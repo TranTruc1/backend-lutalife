@@ -22,6 +22,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/customers", customerRoutes);
+app.get("/api/ping", (req, res) => {
+  res.json({ message: "pong" });
+});
 
 // Port & DB URI
 const PORT = process.env.PORT || 5000;

@@ -22,24 +22,26 @@ app.use("/api/users", userRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/customers", customerRoutes);
 
-// Health check
-app.get("/", (req, res) => {
-  res.send("✅ Backend is running!");
-});
+// Port & DB URI
+const PORT = process.env.PORT || 5000;   // Render sẽ inject PORT tự động
+const MONGO_URI = process.env.MONGO_URI;
 
-// MongoDB connect (chỉ kết nối 1 lần)
-mongoose
-  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/clinic")
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err.message));
+// Kết nối MongoDB + chạy server
+const startServer = async () => {
+  try {
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ MongoDB connected");
 
-// Nếu chạy local thì listen
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () =>
-    console.log(`🚀 Server running at http://localhost:${PORT}`)
-  );
-}
+    app.listen(PORT, "0.0.0.0", () => {   // quan trọng: listen 0.0.0.0 thay vì default localhost
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
+    process.exit(1);
+  }
+};
 
-// ⚠️ Trên Vercel phải export app
-export default app;
+startServer();

@@ -52,13 +52,13 @@ router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
   }
 });
 
-// 4. PUT: Cập nhật trạng thái (nếu cần sau này)
+// 4. PUT: Cập nhật thông tin đơn hàng (Dùng cho tính năng Sửa)
 router.put("/:id", authMiddleware, adminOrEditor, async (req, res) => {
   try {
     const updated = await Appointment.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true } // Trả về document mới sau khi update
     );
     res.json(updated);
   } catch (err) {
